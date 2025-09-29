@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+
+# PyTorch models (too large for GitHub)
+checkpoints/*.pth
+*.pth
+*.pt
+
+# Data folders (too large)
+datasets/train/
+datasets/val/
+
+# Generated outputs
+uploads/
+outputs/
+evaluation_results/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Keep folder structure
+!.gitkeep
