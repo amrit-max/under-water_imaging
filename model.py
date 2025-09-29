@@ -21,7 +21,7 @@ class UNet(nn.Module):
     def __init__(self, in_channels=3, out_channels=3):
         super(UNet, self).__init__()
         
-        # Encoder
+      
         self.enc1 = DoubleConv(in_channels, 64)
         self.pool1 = nn.MaxPool2d(2)
         
@@ -34,10 +34,10 @@ class UNet(nn.Module):
         self.enc4 = DoubleConv(256, 512)
         self.pool4 = nn.MaxPool2d(2)
         
-        # Bottleneck
+       
         self.bottleneck = DoubleConv(512, 1024)
         
-        # Decoder
+        
         self.up4 = nn.ConvTranspose2d(1024, 512, 2, stride=2)
         self.dec4 = DoubleConv(1024, 512)
         
@@ -53,7 +53,7 @@ class UNet(nn.Module):
         self.out = nn.Conv2d(64, out_channels, 1)
         
     def forward(self, x):
-        # Encoder
+      
         e1 = self.enc1(x)
         p1 = self.pool1(e1)
         
@@ -66,10 +66,10 @@ class UNet(nn.Module):
         e4 = self.enc4(p3)
         p4 = self.pool4(e4)
         
-        # Bottleneck
+       
         b = self.bottleneck(p4)
         
-        # Decoder with skip connections
+        
         d4 = self.up4(b)
         d4 = torch.cat([d4, e4], dim=1)
         d4 = self.dec4(d4)

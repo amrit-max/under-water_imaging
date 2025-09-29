@@ -9,12 +9,12 @@ class Predictor:
     def __init__(self, model_path, device='cuda'):
         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
         
-        # Load model
+        
         self.model = UNet().to(self.device)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
         
-        # Transform
+       
         self.transform = transforms.Compose([
             transforms.Resize((256, 256)),
             transforms.ToTensor(),
@@ -30,21 +30,21 @@ class Predictor:
             image_path: Path to input hazy image
             output_path: Path to save dehazed image
         """
-        # Load and preprocess image
+        
         img = Image.open(image_path).convert('RGB')
         original_size = img.size
         
         img_tensor = self.transform(img).unsqueeze(0).to(self.device)
         
-        # Predict
+       
         with torch.no_grad():
             output = self.model(img_tensor)
         
-        # Post-process
+       
         output_img = self.to_pil(output.squeeze(0).cpu())
         output_img = output_img.resize(original_size, Image.LANCZOS)
         
-        # Save
+        
         output_img.save(output_path)
         print(f'Saved dehazed image to {output_path}')
         

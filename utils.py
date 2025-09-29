@@ -55,7 +55,7 @@ def visualize_results(hazy_img, clean_img, output_img, save_path=None):
     """Visualize comparison of hazy, clean, and predicted images"""
     fig, axes = plt.subplots(1, 3, figsize=(15, 5))
     
-    # Convert tensors to numpy arrays
+    
     if torch.is_tensor(hazy_img):
         hazy_img = hazy_img.permute(1, 2, 0).cpu().numpy()
     if torch.is_tensor(clean_img):

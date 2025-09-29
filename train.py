@@ -13,14 +13,14 @@ class Trainer:
         self.config = config
         self.device = torch.device('cuda' if torch.cuda.is_available() else 'cpu')
         
-        # Create model
+        
         self.model = UNet().to(self.device)
         
-        # Loss and optimizer
+       
         self.criterion = nn.MSELoss()
         self.optimizer = optim.Adam(self.model.parameters(), lr=config['lr'])
         
-        # Data loaders
+        
         train_dataset = UnderwaterDataset(
             config['data_dir'], 
             mode='train', 
@@ -45,10 +45,10 @@ class Trainer:
             num_workers=config['num_workers']
         )
         
-        # Create checkpoint directory
+        
         os.makedirs(config['checkpoint_dir'], exist_ok=True)
         
-        # Training history
+        
         self.train_losses = []
         self.val_losses = []
     
@@ -60,11 +60,11 @@ class Trainer:
         for hazy, clean in pbar:
             hazy, clean = hazy.to(self.device), clean.to(self.device)
             
-            # Forward pass
+            
             output = self.model(hazy)
             loss = self.criterion(output, clean)
             
-            # Backward pass
+            
             self.optimizer.zero_grad()
             loss.backward()
             self.optimizer.step()
@@ -95,17 +95,17 @@ class Trainer:
         for epoch in range(self.config['epochs']):
             print(f'\nEpoch {epoch+1}/{self.config["epochs"]}')
             
-            # Train
+            
             train_loss = self.train_epoch()
             self.train_losses.append(train_loss)
             
-            # Validate
+            
             val_loss = self.validate()
             self.val_losses.append(val_loss)
             
             print(f'Train Loss: {train_loss:.4f}, Val Loss: {val_loss:.4f}')
             
-            # Save best model
+            
             if val_loss < best_val_loss:
                 best_val_loss = val_loss
                 torch.save(
@@ -114,14 +114,14 @@ class Trainer:
                 )
                 print('Best model saved!')
             
-            # Save checkpoint
+            
             if (epoch + 1) % 10 == 0:
                 torch.save(
                     self.model.state_dict(), 
                     os.path.join(self.config['checkpoint_dir'], f'model_epoch_{epoch+1}.pth')
                 )
         
-        # Plot training history
+       
         self.plot_history()
     
     def plot_history(self):
@@ -139,9 +139,9 @@ if __name__ == '__main__':
     config = {
         'data_dir': 'datasets',
         'checkpoint_dir': 'checkpoints',
-        'img_size': 128,        # ← Changed from 256 to 128 (4x faster!)
-        'batch_size': 16,       # ← Changed from 8 to 16 (2x faster!)
-        'epochs': 20,           # ← Changed from 100 to 20 (5x faster!)
+        'img_size': 128,        
+        'batch_size': 16,       
+        'epochs': 20,           
         'lr': 0.0001,
         'num_workers': 4
     }

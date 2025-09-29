@@ -9,14 +9,14 @@ import io
 app = Flask(__name__)
 app.config['UPLOAD_FOLDER'] = 'uploads'
 app.config['OUTPUT_FOLDER'] = 'outputs'
-app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  # 16MB max file size
+app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
 app.config['ALLOWED_EXTENSIONS'] = {'png', 'jpg', 'jpeg', 'bmp'}
 
-# Create directories
+
 os.makedirs(app.config['UPLOAD_FOLDER'], exist_ok=True)
 os.makedirs(app.config['OUTPUT_FOLDER'], exist_ok=True)
 
-# Initialize predictor
+
 MODEL_PATH = 'checkpoints/best_model.pth'
 predictor = None
 
@@ -55,11 +55,11 @@ def upload_file():
         output_filename = f'dehazed_{filename}'
         output_path = os.path.join(app.config['OUTPUT_FOLDER'], output_filename)
         
-        # Save uploaded file
+        
         file.save(input_path)
         
         try:
-            # Process image
+            
             predictor.predict(input_path, output_path)
             
             return jsonify({

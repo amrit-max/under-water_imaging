@@ -11,12 +11,12 @@ class Evaluator:
     def __init__(self, model_path, data_dir, device='cuda'):
         self.device = torch.device(device if torch.cuda.is_available() else 'cpu')
         
-        # Load model
+        
         self.model = UNet().to(self.device)
         self.model.load_state_dict(torch.load(model_path, map_location=self.device))
         self.model.eval()
         
-        # Load validation dataset
+        
         val_dataset = UnderwaterDataset(
             data_dir, 
             mode='val', 
@@ -46,17 +46,17 @@ class Evaluator:
                 hazy = hazy.to(self.device)
                 clean = clean.to(self.device)
                 
-                # Predict
+               
                 output = self.model(hazy)
                 
-                # Calculate metrics
+                
                 psnr = calculate_psnr(output, clean)
                 ssim = calculate_ssim(output, clean)
                 
                 psnr_scores.append(psnr)
                 ssim_scores.append(ssim)
                 
-                # Save sample visualizations
+                
                 if save_samples and sample_count < num_samples:
                     save_path = f'evaluation_results/sample_{i+1}.png'
                     visualize_results(
@@ -67,7 +67,7 @@ class Evaluator:
                     )
                     sample_count += 1
         
-        # Print statistics
+        
         avg_psnr = sum(psnr_scores) / len(psnr_scores)
         avg_ssim = sum(ssim_scores) / len(ssim_scores)
         
@@ -82,7 +82,7 @@ class Evaluator:
         print(f'Max SSIM: {max(ssim_scores):.4f}')
         print('='*50)
         
-        # Save results to file
+        
         with open('evaluation_results/metrics.txt', 'w') as f:
             f.write(f'Average PSNR: {avg_psnr:.2f} dB\n')
             f.write(f'Average SSIM: {avg_ssim:.4f}\n')

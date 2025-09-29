@@ -1,4 +1,4 @@
-# check_dataset.py
+
 import os
 
 def check_dataset():
@@ -21,7 +21,7 @@ def check_dataset():
         if len(clean_images) != len(hazy_images):
             print("❌ MISMATCH!")
             
-            # Find missing files
+            
             clean_set = set(clean_images)
             hazy_set = set(hazy_images)
             
@@ -40,7 +40,7 @@ def check_dataset():
         else:
             print("✅ Counts match!")
             
-            # Check if filenames match
+           
             if clean_images == hazy_images:
                 print("✅ Filenames match perfectly!")
             else:

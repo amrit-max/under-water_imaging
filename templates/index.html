@@ -204,7 +204,7 @@
 </head>
 <body>
     <div class="container">
-        <h1>🌊 Underwater Image Dehazing</h1>
+        <h1>Underwater Image Dehazing</h1>
         <p class="subtitle">Transform hazy underwater images into crystal clear photos</p>
 
         <div class="upload-area" id="uploadArea">
@@ -249,17 +249,17 @@
         const dehazedImage = document.getElementById('dehazedImage');
         const downloadBtn = document.getElementById('downloadBtn');
 
-        // Click to upload
+        
         uploadArea.addEventListener('click', () => fileInput.click());
 
-        // File input change
+        
         fileInput.addEventListener('change', (e) => {
             if (e.target.files.length > 0) {
                 uploadFile(e.target.files[0]);
             }
         });
 
-        // Drag and drop
+      
         uploadArea.addEventListener('dragover', (e) => {
             e.preventDefault();
             uploadArea.classList.add('dragover');
@@ -278,19 +278,19 @@
         });
 
         async function uploadFile(file) {
-            // Validate file type
+           
             const validTypes = ['image/png', 'image/jpeg', 'image/jpg', 'image/bmp'];
             if (!validTypes.includes(file.type)) {
                 showError('Please upload a valid image file (PNG, JPG, or BMP)');
                 return;
             }
 
-            // Hide previous results and errors
+            
             results.classList.remove('show');
             error.classList.remove('show');
             loading.classList.add('show');
 
-            // Create form data
+            
             const formData = new FormData();
             formData.append('file', file);
 
@@ -303,14 +303,14 @@
                 const data = await response.json();
 
                 if (data.success) {
-                    // Show original image
+                    
                     const reader = new FileReader();
                     reader.onload = (e) => {
                         originalImage.src = e.target.result;
                     };
                     reader.readAsDataURL(file);
 
-                    // Show dehazed image
+                    
                     dehazedImage.src = `/view/${data.output_file}?t=${Date.now()}`;
                     downloadBtn.href = `/download/${data.output_file}`;
 
