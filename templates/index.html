@@ -191,6 +191,49 @@
             margin: 0 10px;
         }
 
+        .metrics {
+            background: #f8f9ff;
+            border-radius: 15px;
+            padding: 20px;
+            margin: 20px 0;
+            border: 2px solid #e0e7ff;
+        }
+
+        .metrics h3 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 15px;
+            font-size: 1.3em;
+        }
+
+        .metrics-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+        }
+
+        .metric-item {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .metric-value {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #667eea;
+            margin-bottom: 5px;
+        }
+
+        .metric-label {
+            color: #666;
+            font-size: 0.9em;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
         @media (max-width: 768px) {
             .image-comparison {
                 grid-template-columns: 1fr;
@@ -232,6 +275,25 @@
                     <img id="dehazedImage" src="" alt="Dehazed">
                 </div>
             </div>
+            
+            <div class="metrics" id="metrics">
+                <h3>Image Quality Metrics</h3>
+                <div class="metrics-grid">
+                    <div class="metric-item">
+                        <div class="metric-value" id="psnrValue">-</div>
+                        <div class="metric-label">PSNR (dB)</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="ssimValue">-</div>
+                        <div class="metric-label">SSIM</div>
+                    </div>
+                    <div class="metric-item">
+                        <div class="metric-value" id="uiqmValue">-</div>
+                        <div class="metric-label">UIQM</div>
+                    </div>
+                </div>
+            </div>
+            
             <div class="action-buttons">
                 <a id="downloadBtn" class="btn" download>Download Result</a>
                 <button class="btn" onclick="location.reload()">Process Another</button>
@@ -248,6 +310,9 @@
         const originalImage = document.getElementById('originalImage');
         const dehazedImage = document.getElementById('dehazedImage');
         const downloadBtn = document.getElementById('downloadBtn');
+        const psnrValue = document.getElementById('psnrValue');
+        const ssimValue = document.getElementById('ssimValue');
+        const uiqmValue = document.getElementById('uiqmValue');
 
         
         uploadArea.addEventListener('click', () => fileInput.click());
@@ -313,6 +378,13 @@
                     
                     dehazedImage.src = `/view/${data.output_file}?t=${Date.now()}`;
                     downloadBtn.href = `/download/${data.output_file}`;
+
+                    // Display metrics if available
+                    if (data.metrics) {
+                        psnrValue.textContent = data.metrics.psnr;
+                        ssimValue.textContent = data.metrics.ssim;
+                        uiqmValue.textContent = data.metrics.uiqm;
+                    }
 
                     loading.classList.remove('show');
                     results.classList.add('show');

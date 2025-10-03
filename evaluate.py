@@ -2,7 +2,7 @@ import torch
 from torch.utils.data import DataLoader
 from model import UNet
 from dataset import UnderwaterDataset, get_transforms
-from utils import calculate_psnr, calculate_ssim, visualize_results
+from utils import calculate_psnr, calculate_ssim, calculate_uiqm, visualize_results
 from tqdm import tqdm
 import os
 import argparse
@@ -36,6 +36,7 @@ class Evaluator:
         """Evaluate model on validation set"""
         psnr_scores = []
         ssim_scores = []
+        uiqm_scores = []
         
         os.makedirs('evaluation_results', exist_ok=True)
         
@@ -53,8 +54,17 @@ class Evaluator:
                 psnr = calculate_psnr(output, clean)
                 ssim = calculate_ssim(output, clean)
                 
+                # Calculate UIQM for the enhanced image
+                from PIL import Image
+                import numpy as np
+                output_img = output.squeeze(0).permute(1, 2, 0).cpu().numpy()
+                output_img = np.clip(output_img, 0, 1)
+                output_img = (output_img * 255).astype(np.uint8)
+                uiqm = calculate_uiqm(output_img)
+                
                 psnr_scores.append(psnr)
                 ssim_scores.append(ssim)
+                uiqm_scores.append(uiqm)
                 
                 
                 if save_samples and sample_count < num_samples:
@@ -70,32 +80,41 @@ class Evaluator:
         
         avg_psnr = sum(psnr_scores) / len(psnr_scores)
         avg_ssim = sum(ssim_scores) / len(ssim_scores)
+        avg_uiqm = sum(uiqm_scores) / len(uiqm_scores)
         
         print('\n' + '='*50)
         print('EVALUATION RESULTS')
         print('='*50)
         print(f'Average PSNR: {avg_psnr:.2f} dB')
         print(f'Average SSIM: {avg_ssim:.4f}')
+        print(f'Average UIQM: {avg_uiqm:.4f}')
         print(f'Min PSNR: {min(psnr_scores):.2f} dB')
         print(f'Max PSNR: {max(psnr_scores):.2f} dB')
         print(f'Min SSIM: {min(ssim_scores):.4f}')
         print(f'Max SSIM: {max(ssim_scores):.4f}')
+        print(f'Min UIQM: {min(uiqm_scores):.4f}')
+        print(f'Max UIQM: {max(uiqm_scores):.4f}')
         print('='*50)
         
         
         with open('evaluation_results/metrics.txt', 'w') as f:
             f.write(f'Average PSNR: {avg_psnr:.2f} dB\n')
             f.write(f'Average SSIM: {avg_ssim:.4f}\n')
+            f.write(f'Average UIQM: {avg_uiqm:.4f}\n')
             f.write(f'Min PSNR: {min(psnr_scores):.2f} dB\n')
             f.write(f'Max PSNR: {max(psnr_scores):.2f} dB\n')
             f.write(f'Min SSIM: {min(ssim_scores):.4f}\n')
             f.write(f'Max SSIM: {max(ssim_scores):.4f}\n')
+            f.write(f'Min UIQM: {min(uiqm_scores):.4f}\n')
+            f.write(f'Max UIQM: {max(uiqm_scores):.4f}\n')
         
         return {
             'avg_psnr': avg_psnr,
             'avg_ssim': avg_ssim,
+            'avg_uiqm': avg_uiqm,
             'psnr_scores': psnr_scores,
-            'ssim_scores': ssim_scores
+            'ssim_scores': ssim_scores,
+            'uiqm_scores': uiqm_scores
         }
 
 if __name__ == '__main__':

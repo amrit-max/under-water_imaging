@@ -60,11 +60,16 @@ def upload_file():
         
         try:
             
-            predictor.predict(input_path, output_path)
+            enhanced_img, metrics = predictor.predict(input_path, output_path, calculate_metrics=True)
             
             return jsonify({
                 'success': True,
-                'output_file': output_filename
+                'output_file': output_filename,
+                'metrics': {
+                    'psnr': round(metrics['psnr'], 2),
+                    'ssim': round(metrics['ssim'], 4),
+                    'uiqm': round(metrics['uiqm'], 4)
+                }
             })
         except Exception as e:
             return jsonify({'error': str(e)}), 500
